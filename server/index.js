@@ -9,11 +9,14 @@ app.use(express.json());
 app.use(cors());
 
 // MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/auth_db', {
+mongoose.connect('mongodb+srv://parthasarathis22cse:partha%4026@book.vd0be.mongodb.net/?retryWrites=true&w=majority&appName=book', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+})
+.then(() => console.log("Connected to MongoDB Atlas"))
+.catch((error) => console.error("MongoDB connection error:", error));
 
+// User Schema
 const UserSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -64,6 +67,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
