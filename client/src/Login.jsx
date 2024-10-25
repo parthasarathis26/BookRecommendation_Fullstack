@@ -23,7 +23,7 @@ function Login() {
     e.preventDefault();
   
     try {
-      const response = await axios.post('http://127.0.0.1:5000/login', formData);
+      const response = await axios.post('https://book-recommendator-backend.onrender.com/login', formData);
       console.log('Login successful, token:', response.data.token);
       localStorage.setItem('token', response.data.token); // Save token
   
