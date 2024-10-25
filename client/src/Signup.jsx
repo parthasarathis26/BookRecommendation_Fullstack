@@ -43,7 +43,7 @@ function Signup() {
     // Ensure all password rules are satisfied before submitting
     if (passwordValid.hasUppercase && passwordValid.hasLowercase && passwordValid.hasNumber) {
       try {
-        const response = await axios.post('http://localhost:5000/signup', formData);
+        const response = await axios.post('https://bookrecommendation-fullstack-2.onrender.com/signup', formData);
         console.log('Signup successful:', response.data);
         navigate('/login'); // Redirect to login on successful signup
       } catch (error) {
