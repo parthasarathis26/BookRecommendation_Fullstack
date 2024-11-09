@@ -10,15 +10,16 @@ function Signup() {
     password: '',
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // New loading state
+  const [success, setSuccess] = useState(''); // New success message state
   const [passwordValid, setPasswordValid] = useState({
     hasUppercase: false,
     hasLowercase: false,
     hasNumber: false,
   });
-  const [showPasswordRules, setShowPasswordRules] = useState(false); // To show password rules
+  const [showPasswordRules, setShowPasswordRules] = useState(false);
   const navigate = useNavigate();
 
-  // Function to handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -26,7 +27,6 @@ function Signup() {
       [name]: value,
     });
 
-    // If password is being typed, check for validity
     if (name === 'password') {
       setPasswordValid({
         hasUppercase: /[A-Z]/.test(value),
@@ -36,17 +36,21 @@ function Signup() {
     }
   };
 
-  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Ensure all password rules are satisfied before submitting
     if (passwordValid.hasUppercase && passwordValid.hasLowercase && passwordValid.hasNumber) {
+      setLoading(true); // Start loading
+      setError(''); // Clear any previous errors
+      setSuccess(''); // Clear any previous success message
       try {
-        const response = await axios.post('https://book-recommendator-backend.onrender.com/signup', formData);
+        // Using localhost for the backend URL
+        const response = await axios.post('http://localhost:5000/signup', formData);
         console.log('Signup successful:', response.data);
-        navigate('/login'); // Redirect to login on successful signup
+        setLoading(false); // Stop loading
+        setSuccess('Signed up successfully! Redirecting to login...'); // Set success message
+        setTimeout(() => navigate('/login'), 2000); // Redirect after 2 seconds
       } catch (error) {
+        setLoading(false); // Stop loading
         setError(error.response.data.message);
       }
     } else {
@@ -58,7 +62,6 @@ function Signup() {
     navigate('/login');
   };
 
-  // Hide password rules when clicking outside the password field
   const hidePasswordRules = () => {
     setShowPasswordRules(false);
   };
@@ -76,7 +79,7 @@ function Signup() {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            onFocus={hidePasswordRules}  // Hide rules when clicking here
+            onFocus={hidePasswordRules}
             required
           />
         </div><br /><br />
@@ -90,7 +93,7 @@ function Signup() {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            onFocus={hidePasswordRules}  // Hide rules when clicking here
+            onFocus={hidePasswordRules}
             required
           />
         </div><br /><br />
@@ -104,12 +107,11 @@ function Signup() {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            onFocus={() => setShowPasswordRules(true)}  // Show rules on focus
+            onFocus={() => setShowPasswordRules(true)}
             required
           />
         </div><br /><br />
 
-        {/* Display password validation rules */}
         {showPasswordRules && (
           <div className={styles.passwordRules}>
             <p>Password must contain:</p>
@@ -127,12 +129,13 @@ function Signup() {
           </div>
         )}
 
+        {loading && <div className={styles.loading}>Signing up...</div>} {/* Show loading message */}
+        {success && <div className={styles.success}>{success}</div>} {/* Show success message */}
         {error && <div className={styles.alert}>{error}</div>}
 
         <div className={styles.dFlex}>
-          {/* Disable Register button until password is valid */}
           <button type="submit" className={styles.btnPrimary} disabled={
-            !(passwordValid.hasUppercase && passwordValid.hasLowercase && passwordValid.hasNumber)
+            !(passwordValid.hasUppercase && passwordValid.hasLowercase && passwordValid.hasNumber) || loading
           }>
             Register
           </button><br /><br />

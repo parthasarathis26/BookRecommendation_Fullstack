@@ -9,6 +9,7 @@ function Login() {
     password: '',
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Add loading state
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -21,19 +22,34 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    setLoading(true);
+
+    console.log("Form Data being sent:", formData); // Log form data
+
     try {
-      const response = await axios.post('https://book-recommendator-backend.onrender.com/login', formData);
-      console.log('Login successful, token:', response.data.token);
-      localStorage.setItem('token', response.data.token); // Save token
-  
-      // Redirect to Main page after successful login
-      navigate('/main'); // Adjusted to point to the correct route
+      const response = await axios.post('http://localhost:5000/login', formData);
+      console.log('Full response data:', response.data);
+
+      const { token, user } = response.data;
+
+      if (token) {
+        localStorage.setItem('token', token);
+      }
+      if (user) {
+        localStorage.setItem('username', user.name);
+        localStorage.setItem('userEmail', user.email);
+        localStorage.setItem('userId', user.userId); // Store userId in localStorage
+      }
+
+      navigate('/main');
     } catch (error) {
-      setError(error.response.data.message);
+      console.error("Login error:", error); // Log error for debugging
+      setError(error.response?.data?.message || 'An error occurred');
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   const handleSignupRedirect = () => {
     navigate('/'); // Navigate to Signup page
   };
@@ -41,47 +57,53 @@ function Login() {
   return (
     <div className={styles.container}> {/* Using CSS module class */}
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="email" className={styles.formLabel}>Email </label>
-          <input
-            type="email"
-            className={`form-control ${styles.formControl}`} // Combining with Bootstrap class
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            required
-          />
-        </div><br></br>
-
-        <div className="mb-3">
-          <label htmlFor="password" className={styles.formLabel}>Password </label>
-          <input
-            type="password"
-            className={`form-control ${styles.formControl}`} // Combining with Bootstrap class
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
-        </div><br></br>
-
-        {error && <div className={styles.alert}>{error}</div>} {/* Using CSS module class */}
-
-        <div className={styles.dFlex}>
-          <button type="submit" className={styles.btnPrimary}>Login</button><br></br>
-          <p>Don't have an account? </p>
-          <button
-            type="button"
-            className={styles.btnLink}
-            onClick={handleSignupRedirect}
-          >
-            Signup
-          </button>
+      {loading ? ( // Show loading text or spinner if loading is true
+        <div className={styles.loading}>
+          <p>Loading...</p>
         </div>
-      </form>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="email" className={styles.formLabel}>Email </label>
+            <input
+              type="email"
+              className={`form-control ${styles.formControl}`} // Combining with Bootstrap class
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </div><br />
+
+          <div className="mb-3">
+            <label htmlFor="password" className={styles.formLabel}>Password </label>
+            <input
+              type="password"
+              className={`form-control ${styles.formControl}`} // Combining with Bootstrap class
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+          </div><br />
+
+          {error && <div className={styles.alert}>{error}</div>} {/* Using CSS module class */}
+
+          <div className={styles.dFlex}>
+            <button type="submit" className={styles.btnPrimary}>Login</button><br />
+            <p>Don't have an account? </p>
+            <button
+              type="button"
+              className={styles.btnLink}
+              onClick={handleSignupRedirect}
+            >
+              Signup
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }
