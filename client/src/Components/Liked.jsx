@@ -13,7 +13,7 @@ const Liked = ({ userId }) => {
   useEffect(() => {
     const fetchLikedBooks = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/getLikedBooks/${userId}`);
+        const response = await axios.get(`https://bookrecommendation-fullstack-2.onrender.com/api/getLikedBooks/${userId}`);
         const bookIds = response.data;
 
         const bookDetailsPromises = bookIds.map(async (bookId) => {
@@ -47,7 +47,7 @@ const Liked = ({ userId }) => {
 
   const handleRemoveBook = async (bookId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/removeLike/${userId}/${bookId}`);
+      await axios.delete(`https://bookrecommendation-fullstack-2.onrender.com/api/removeLike/${userId}/${bookId}`);
       setLikedBooks(prevBooks => prevBooks.filter(book => book.id !== bookId));
     } catch (error) {
       console.error("Error removing book from liked list", error);

@@ -44,7 +44,7 @@ function Signup() {
       setSuccess(''); // Clear any previous success message
       try {
         // Using localhost for the backend URL
-        const response = await axios.post('http://localhost:5000/signup', formData);
+        const response = await axios.post('https://bookrecommendation-fullstack-2.onrender.com/signup', formData);
         console.log('Signup successful:', response.data);
         setLoading(false); // Stop loading
         setSuccess('Signed up successfully! Redirecting to login...'); // Set success message

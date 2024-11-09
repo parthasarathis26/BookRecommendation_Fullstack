@@ -12,7 +12,7 @@ const Card = ({ book, userId }) => {
   // Fetch liked books for the specific user from the server
   const fetchLikedBooks = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/getLikedBooks/${userId}`);
+      const response = await axios.get(`https://bookrecommendation-fullstack-2.onrender.com/api/getLikedBooks/${userId}`);
       // Store liked book IDs in a Set for efficient lookup
       setLikedBooks(new Set(response.data.map((book) => book._id)));
       setIsLoading(false); // Set loading to false after fetching
@@ -24,7 +24,7 @@ const Card = ({ book, userId }) => {
   // Toggle like/unlike for a specific book
   const toggleLike = async (bookId) => {
     const isLiked = likedBooks.has(bookId);
-    const endpoint = isLiked ? 'http://localhost:5000/api/removeLike' : 'http://localhost:5000/api/likeBook';
+    const endpoint = isLiked ? 'https://bookrecommendation-fullstack-2.onrender.com/api/removeLike' : 'https://bookrecommendation-fullstack-2.onrender.com/api/likeBook';
     const payload = { userId, bookId };
     
     try {
